@@ -1,0 +1,10 @@
+@"
+*.csv
+*.joblib
+*.pkl
+*.pt
+*.pth
+.env
+.env.*
+__pycache__/
+"@ | Set-Content .gitignore
