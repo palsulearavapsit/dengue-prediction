@@ -1,0 +1,81 @@
+/* dashboard.css - layout and components */
+/* Basic reset already in global.css */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+.logo-img { width: 32px; height: 32px; }
+.logo h2 { font-size: 1.1rem; margin: 0; }
+.nav ul { list-style: none; padding: 0; margin: 0; }
+.nav li { margin-bottom: 0.8rem; }
+.nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  display: block;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+}
+.nav a.active, .nav a:hover {
+  background: #e6f2ff;
+  color: #0066cc;
+}
+
+.main-content {
+  margin-left: 260px; /* sidebar width + gap */
+  padding: 2rem;
+}
+.header h1 { margin: 0; font-size: 1.8rem; }
+.header .subtitle { margin: 0.3rem 0 1rem; color: #555; }
+.info-bar { display: flex; gap: 2rem; font-size: 0.9rem; color: #777; margin-bottom: 1.5rem; }
+
+.section { max-width: 960px; margin: 0 auto; }
+.empty-state { text-align: center; color: #666; }
+
+.prediction-form h2 { margin-bottom: 1rem; }
+#predict-form { display: grid; gap: 1rem; }
+#predict-form label { font-weight: 600; }
+#predict-form input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; }
+#predict-button { padding: 0.6rem; background: #0066cc; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+#predict-button:disabled { background: #999; cursor: not-allowed; }
+
+.result-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 2rem; }
+.card { background: #fff; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+.card.full-width { grid-column: 1 / -1; }
+.card h3 { margin-top: 0; font-size: 1rem; color: #333; }
+.card .value { font-size: 1.6rem; font-weight: bold; margin-top: 0.5rem; }
+
+/* Risk level colors */
+#risk-level.low { color: #2e7d32; }
+#risk-level.moderate { color: #f9a825; }
+#risk-level.high { color: #ef6c00; }
+#risk-level.very-high { color: #c62828; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { position: static; width: 100%; height: auto; border-right: none; border-bottom: 1px solid #e0e0e0; }
+  .main-content { margin-left: 0; }
+  .nav ul { display: flex; overflow-x: auto; }
+  .nav li { margin-right: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .info-bar { flex-direction: column; gap: 0.5rem; }
+  .result-cards { grid-template-columns: 1fr; }
+}
