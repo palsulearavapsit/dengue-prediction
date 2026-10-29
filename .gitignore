@@ -1,10 +1,7 @@
-@"
-*.csv
-*.joblib
-*.pkl
-*.pt
-*.pth
 .env
 .env.*
-__pycache__/
-"@ | Set-Content .gitignore
+!.env.example
+frontend/js/config.js
+node_modules/
+.DS_Store
+*.log

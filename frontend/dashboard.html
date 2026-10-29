@@ -1,87 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dengue Outbreak Prediction Dashboard</title>
-  <link rel="stylesheet" href="css/global.css" />
-  <link rel="stylesheet" href="css/dashboard.css" />
+  <title>Dengue Outbreak Prediction — Clinical Surveillance Dashboard</title>
+  <link rel="stylesheet" href="./css/global.css" />
+  <link rel="stylesheet" href="./css/dashboard.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
+
 <body>
-  <div class="sidebar" id="sidebar">
-    <div class="logo">
-      <img src="assets/logo.svg" alt="Dengue Logo" class="logo-img" />
-      <h2>Dengue Outbreak Prediction</h2>
+  <div class="app-shell">
+    <!-- Backdrop for mobile sidebar toggle -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- Collapsible / Fixed Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <div class="brand-wrapper">
+          <img src="assets/logo.svg" alt="Dengue Surveillance Logo" class="logo-img" />
+          <div class="brand-text">
+            <h2>Dengue AI</h2>
+            <span class="brand-tag">Surveillance DSS</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Analytical Views</div>
+        <ul>
+          <li>
+            <a href="#overview" class="nav-link active" data-section="overview">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Overview Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#heatmap" class="nav-link" data-section="heatmap">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+              India Risk Heatmap
+            </a>
+          </li>
+          <li>
+            <a href="#xai" class="nav-link" data-section="xai">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Explainable AI (XAI)
+            </a>
+          </li>
+          <li>
+            <a href="#prediction" class="nav-link" data-section="prediction">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              District Prediction
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-section-title">System Information</div>
+        <ul>
+          <li>
+            <a href="#about" class="nav-link" data-section="about">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Model & Metadata
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link" id="logout-link">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Shell -->
+    <div class="main-content">
+      <!-- Mobile Bar -->
+      <header class="mobile-topbar">
+        <div class="brand-wrapper">
+          <img src="assets/logo.svg" alt="Dengue Surveillance Logo" class="logo-img" />
+          <span style="font-weight: 700; font-size: 0.95rem;">Dengue AI</span>
+        </div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation menu">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Context Bar -->
+      <header class="top-header">
+        <div class="header-meta">
+          <h1 id="page-title">Overview Dashboard</h1>
+          <p class="subtitle" id="page-subtitle">National and state-level epidemiological surveillance indicators</p>
+        </div>
+
+        <div class="status-pills">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>Active Model: <strong>RandomForest_log1p</strong></span>
+          </div>
+          <div class="status-pill">
+            <span>Holdout Target: <strong>Next Observed Report</strong></span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <!-- 1. OVERVIEW DASHBOARD SECTION -->
+        <section class="dashboard-section active" id="overview-section" aria-labelledby="heading-overview">
+          <div class="section-intro">
+            <h2 id="heading-overview">Epidemiological Surveillance Overview</h2>
+            <p>Summary indicators aggregating validated historical records and monitored administrative regions.</p>
+          </div>
+
+          <div class="grid-cards">
+            <div class="card">
+              <div class="card-title">Historical Observations</div>
+              <div class="card-value" id="kpi-historical-obs">—</div>
+              <div class="card-hint">Validated surveillance records across 34 states/UTs</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Eligible Districts</div>
+              <div class="card-value" id="kpi-eligible-districts">—</div>
+              <div class="card-hint">Districts meeting historical lag threshold</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Predicted Cases (National Sum)</div>
+              <div class="card-value" id="kpi-predicted-cases">—</div>
+              <div class="card-hint">Estimated aggregate across active monitored districts</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">High-Risk Districts</div>
+              <div class="card-value" id="kpi-high-risk-districts">—</div>
+              <div class="card-hint">Districts exceeding alert threshold (≥ 50 cases)</div>
+            </div>
+          </div>
+
+          <!-- Top 10 High-Burden / Vulnerable Districts Leaderboard -->
+          <div class="card leaderboard-card">
+            <div class="leaderboard-header">
+              <div>
+                <div class="card-title">Top High-Burden Surveillance Districts</div>
+                <div class="card-hint">Ranked by latest reported outbreaks and model vulnerability assessments across
+                  monitored jurisdictions</div>
+              </div>
+              <div class="leaderboard-filter-group">
+                <span class="filter-label">Filter Risk:</span>
+                <button type="button" class="filter-chip active" data-filter="ALL">All (10)</button>
+                <button type="button" class="filter-chip" data-filter="VERY HIGH">Very High</button>
+                <button type="button" class="filter-chip" data-filter="HIGH">High</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="surveillance-table" id="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th style="width: 70px;">Rank</th>
+                    <th>District</th>
+                    <th>State / UT</th>
+                    <th style="text-align: right;">Latest Cases</th>
+                    <th style="text-align: right;">Model Forecast</th>
+                    <th style="text-align: center;">Risk Level</th>
+                    <th style="text-align: center;">Outbreak Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                  <!-- Populated dynamically via dashboard.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="leaderboard-footer">
+              <div class="footer-note">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Click <strong>"Forecast Next Report"</strong> on any district to auto-populate the prediction
+                  model form.</span>
+              </div>
+              <div class="threshold-pill">
+                <span>Alert Outbreak Cutoff:</span>
+                <strong>≥ 50 Reported Cases</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. INDIA DENGUE RISK HEATMAP SECTION -->
+        <section class="dashboard-section" id="heatmap-section" aria-labelledby="heading-heatmap">
+          <div class="section-intro">
+            <h2 id="heading-heatmap">India Dengue Risk Heatmap</h2>
+            <p>District markers show the latest available historical dengue case report in the local cleaned dataset. Marker colors group observed case counts; they are not current outbreak alerts or model forecasts.</p>
+          </div>
+
+          <!-- Risk legend -->
+          <div class="heatmap-legend" role="list" aria-label="Reported case count legend">
+            <div class="legend-item" role="listitem">
+              <span class="legend-dot" style="background:#ef4444;"></span><span>&gt; 200 reported cases</span>
+            </div>
+            <div class="legend-item" role="listitem">
+              <span class="legend-dot" style="background:#f97316;"></span><span>26–200 reported cases</span>
+            </div>
+            <div class="legend-item" role="listitem">
+              <span class="legend-dot" style="background:#f59e0b;"></span><span>10–25 reported cases</span>
+            </div>
+            <div class="legend-item" role="listitem">
+              <span class="legend-dot" style="background:#10b981;"></span><span>&lt; 10 reported cases</span>
+            </div>
+          <div class="legend-note">Click a marker for the latest report date and case count. The dataset ends in 2022; this map does not represent current incidence.</div>
+          </div>
+
+          <!-- Leaflet map container -->
+          <div class="card" style="padding: 0; overflow: hidden; margin-top: 0.75rem;">
+            <div id="leaflet-map" style="height: 540px; width: 100%; border-radius: var(--radius-md);"
+              aria-label="India dengue risk heatmap — interactive map"></div>
+          </div>
+
+          <div class="card" style="margin-top: 1rem; border-left: 4px solid var(--color-primary);">
+            <div class="card-title">Data Provenance</div>
+            <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.6; margin: 0;">
+              Markers show each district’s latest dated record with coordinates from <code>dengue_cleaned.csv</code> (1,618
+              records). Colors group the observed case count only; they are not model predictions. Map tiles © <a href="https://www.openstreetmap.org/copyright"
+              target="_blank" rel="noopener" style="color: var(--color-primary);">OpenStreetMap</a> contributors.
+            </p>
+          </div>
+        </section>
+
+        <!-- 3. EXPLAINABLE AI (XAI) SECTION -->
+        <section class="dashboard-section" id="xai-section" aria-labelledby="heading-xai">
+          <div class="section-intro">
+            <h2 id="heading-xai">Explainable AI (XAI) Attribution</h2>
+            <p>See which inputs the trained model relies on most overall, then ask Gemini to explain those results in plain language.</p>
+          </div>
+
+          <div class="card xai-card">
+            <div class="xai-card-header">
+              <div>
+                <h3 class="xai-heading">Global model feature importance</h3>
+                <p class="card-hint">Top 12 Random Forest impurity-importance groups, aggregated by original input feature.</p>
+              </div>
+              <button type="button" class="btn-primary" id="xai-generate-button" disabled>
+                Explain with Gemini
+              </button>
+            </div>
+
+            <p id="xai-status" class="xai-status" role="status" aria-live="polite">Loading feature importance from the local model…</p>
+            <ol id="xai-importance-list" class="xai-importance-list" aria-label="Global model feature importance"></ol>
+            <p id="xai-model-note" class="xai-model-note hidden"></p>
+
+            <div id="xai-explanation-card" class="xai-explanation-card hidden" aria-live="polite">
+              <h4>Gemini explanation</h4>
+              <div id="xai-explanation" class="xai-explanation"></div>
+            </div>
+
+            <p class="xai-caveat"><strong>How to read this:</strong> These are global impurity-importance percentages, not SHAP values or explanations for one district. They do not show whether a feature raises or lowers a forecast, and they do not establish cause. Impurity importance can favor features with many categories. Gemini summarizes these model statistics; it does not calculate them.</p>
+          </div>
+        </section>
+
+        <!-- 4. DISTRICT PREDICTION SECTION -->
+        <section class="dashboard-section" id="prediction-section" aria-labelledby="heading-prediction">
+          <div class="section-intro">
+            <h2 id="heading-prediction">District Outbreak Forecasting</h2>
+            <p>Generate next-report dengue activity forecasts for eligible administrative districts.</p>
+          </div>
+
+          <div class="form-card">
+            <form id="predict-form" novalidate>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="location-input">Target District / Location</label>
+                  <input type="text" id="location-input" value="Pune" required placeholder="e.g. Pune" />
+                  <small>Phase 2 will provide a validated district selector</small>
+                </div>
+
+                <div class="form-field">
+                  <label for="date-input">Observation Date</label>
+                  <input type="date" id="date-input" required />
+                  <small>Reporting cycle date</small>
+                </div>
+
+                <div class="form-field">
+                  <button type="submit" id="predict-button" class="btn-primary">
+                    <span id="predict-btn-text">Generate Forecast</span>
+                    <span id="predict-loading" class="loading-spinner hidden"></span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Empty State -->
+          <div class="placeholder-box" id="empty-state">
+            <svg class="placeholder-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <h3 class="placeholder-title">No Forecast Generated Yet</h3>
+            <p class="placeholder-desc">Select an eligible district and observation date above to generate an outbreak
+              risk assessment.</p>
+          </div>
+
+          <!-- Result Cards (shown upon submission) -->
+          <div class="grid-cards hidden" id="result-cards">
+            <div class="card">
+              <div class="card-title">Forecasted Cases</div>
+              <div class="card-value" id="predicted-cases">—</div>
+              <div class="card-hint">Estimated next observed report cases</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Assessed Risk Tier</div>
+              <div class="card-value" id="risk-level">—</div>
+              <div class="card-hint">Surveillance alert status</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Geographic Coordinates</div>
+              <div id="location-info"
+                style="font-size: 0.875rem; margin-top: 0.5rem; line-height: 1.5; color: var(--color-text-main);">—
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Surveillance Data Quality</div>
+              <div id="data-quality"
+                style="font-size: 0.875rem; margin-top: 0.5rem; line-height: 1.5; color: var(--color-text-main);">—
+              </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+              <div class="card-title">Assessment Summary</div>
+              <p id="summary-message" style="font-size: 0.9375rem; color: var(--color-text-muted); line-height: 1.5;">—
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. ABOUT SECTION -->
+        <section class="dashboard-section" id="about-section" aria-labelledby="heading-about">
+          <div class="section-intro">
+            <h2 id="heading-about">Model & Methodology Details</h2>
+            <p>Technical architecture, data provenance, and public-health advisory notices.</p>
+          </div>
+
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-title">System Provenance</div>
+            <p style="margin-bottom: 0.75rem; color: var(--color-text-muted); line-height: 1.6;">
+              The Dengue Outbreak Prediction System combines historical dengue surveillance records, meteorological
+              telemetry (temperature, precipitation from Open-Meteo), Earth observation metrics (Leaf Area Index —
+              LAI), and autoregressive lag indicators.
+            </p>
+            <p style="margin-bottom: 0.75rem; color: var(--color-text-muted); line-height: 1.6;">
+              <strong>Model Architecture:</strong> <code>RandomForest_log1p</code> trained on chronological holdout
+              data.<br />
+              <strong>Prediction Target:</strong> <code>next_observed_report_cases</code><br />
+              <strong>Feature Count:</strong> 32 validated temporal, geographical, and lag variables.
+            </p>
+          </div>
+
+          <div class="card" style="border-left: 4px solid var(--color-status-mod);">
+            <div class="card-title" style="color: var(--color-status-mod);">Clinical & Public-Health Disclaimer</div>
+            <p style="font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6;">
+              This system is an experimental machine learning decision-support prototype. It does not replace official
+              epidemiological surveillance conducted by the National Centre for Vector Borne Diseases Control (NCVBDC),
+              municipal health authorities, or certified laboratory diagnostics.
+            </p>
+          </div>
+        </section>
+      </main>
     </div>
-    <nav class="nav">
-      <ul>
-        <li><a href="#" class="nav-link active" data-section="dashboard">Dashboard</a></li>
-        <li><a href="#" class="nav-link" data-section="prediction">Prediction</a></li>
-        <li><a href="#" class="nav-link" data-section="about">About</a></li>
-        <li><a href="#" class="nav-link" id="logout-link">Logout</a></li>
-      </ul>
-    </nav>
   </div>
-  <main class="main-content" id="main-content">
-    <header class="header">
-      <h1>Dengue Outbreak Prediction</h1>
-      <p class="subtitle">Estimate dengue activity for the next observed district-level report.</p>
-      <div class="info-bar">
-        <span>Location: <strong>Pune, Maharashtra</strong></span>
-        <span>Current model: <strong>RandomForest_log1p</strong></span>
-      </div>
-    </header>
-    <section class="section" id="dashboard-section">
-      <div class="empty-state" id="empty-state">
-        <p>No prediction generated yet.</p>
-        <p>Enter a location and prediction date to begin.</p>
-      </div>
-      <div class="prediction-form" id="prediction-form" style="display:none;">
-        <h2>Generate Prediction</h2>
-        <form id="predict-form">
-          <label for="location-input">Location</label>
-          <input type="text" id="location-input" value="Pune" required />
-          <label for="date-input">Prediction Date</label>
-          <input type="date" id="date-input" required />
-          <button type="submit" id="predict-button">Predict Dengue Activity</button>
-          <span id="predict-loading" class="loading-spinner hidden"></span>
-        </form>
-      </div>
-      <div class="result-cards" id="result-cards" style="display:none;">
-        <div class="card" id="prediction-card">
-          <h3>Predicted Cases</h3>
-          <p class="value" id="predicted-cases"></p>
-        </div>
-        <div class="card" id="risk-card">
-          <h3>Risk Level</h3>
-          <p class="value" id="risk-level"></p>
-        </div>
-        <div class="card" id="location-card">
-          <h3>Location</h3>
-          <p id="location-info"></p>
-        </div>
-        <div class="card" id="data-quality-card">
-          <h3>Data Quality</h3>
-          <p id="data-quality"></p>
-        </div>
-        <div class="card full-width" id="summary-card">
-          <h3>Summary</h3>
-          <p id="summary-message"></p>
-        </div>
-      </div>
-    </section>
-    <section class="section" id="about-section" style="display:none;">
-      <h2>About the System</h2>
-      <p>The Dengue Outbreak Prediction System combines historical dengue surveillance, weather/environmental information, geographic information, temporal patterns, district-level dengue lag features, and machine learning to estimate dengue activity for the next observed district-level report.</p>
-      <p>Current supported location: Pune, Maharashtra, India</p>
-      <p>Current model: RandomForest_log1p</p>
-      <p>Current target: next_observed_report_cases</p>
-      <p><em>This system is a prototype decision-support tool and is not intended to replace official dengue surveillance, epidemiological assessment, laboratory diagnosis, or medical advice.</em></p>
-    </section>
-  </main>
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/supabase.js"></script>
-  <script type="module" src="js/api.js"></script>
-  <script type="module" src="js/dashboard.js"></script>
+
+  <!-- Leaflet.js (must load before dashboard.js module which calls L.*) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script type="module" src="./js/config.js"></script>
+  <script type="module" src="./js/supabase.js"></script>
+  <script type="module" src="./js/api.js"></script>
+  <script type="module" src="./js/dashboard.js"></script>
 </body>
+
 </html>

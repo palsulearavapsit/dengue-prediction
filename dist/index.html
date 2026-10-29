@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dengue Outbreak Prediction System - Sign In</title>
+  <script type="module" crossorigin src="./assets/main-t1EL5nN8.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/supabase-BTq05B8F.js">
+  <link rel="stylesheet" crossorigin href="./assets/supabase-CtKH_H99.css">
+  <link rel="stylesheet" crossorigin href="./assets/main-DrBwEG4T.css">
+</head>
+<body>
+  <main class="auth-container">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="auth-header">
+        <span class="auth-badge">Decision Support Platform</span>
+        <h1 class="title" id="auth-title">Dengue Outbreak Prediction</h1>
+        <p class="subtitle">Epidemiological intelligence and risk assessment platform</p>
+      </div>
+
+      <form id="auth-form" novalidate>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required placeholder="name@health.gov.in" autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password" />
+        </div>
+
+        <button type="submit" id="auth-button" class="auth-button">Sign In</button>
+
+        <p class="toggle">
+          <span id="toggle-text">Don't have an account?</span>
+          <a href="#" id="toggle-link">Sign Up</a>
+        </p>
+
+        <div id="message" class="message hidden" role="alert" aria-live="polite"></div>
+      </form>
+
+      <div class="demo-cred">
+        <strong>Demo Surveillance Access</strong>
+        Email: <code>test@demo.com</code><br />
+        Password: <code>test</code>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

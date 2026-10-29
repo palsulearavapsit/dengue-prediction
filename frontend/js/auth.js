@@ -1,5 +1,5 @@
 // auth.js - handle sign in / sign up toggle and authentication
-import { supabase } from "./supabase.js";
+import { supabase, isSupabaseConfigured } from "./supabase.js";
 import { N8N_WEBHOOK_URL } from "./config.js"; // ensures config loads
 
 const form = document.getElementById("auth-form");
@@ -61,6 +61,24 @@ form.addEventListener("submit", async (e) => {
   setLoading(true);
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
+
+  // If credentials are demo and Supabase is not configured or fails
+  if (!isSupabaseConfigured) {
+    // If the demo credentials match the callout box, let the user into the prototype dashboard
+    if (email === "test@demo.com" && password === "test") {
+      localStorage.setItem("dengue_demo_session", "true");
+      showMessage("Signing in with local demo credentials...", "success");
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 300);
+      return;
+    } else {
+      showMessage("Supabase environment variables not detected. Use demo credentials (test@demo.com / test).", "error");
+      setLoading(false);
+      return;
+    }
+  }
+
   try {
     let result;
     if (isSignUp) {
@@ -70,12 +88,27 @@ form.addEventListener("submit", async (e) => {
     }
     const { error } = result;
     if (error) {
+      // If user uses demo credentials but user does not exist in remote Supabase
+      if (email === "test@demo.com" && password === "test") {
+        localStorage.setItem("dengue_demo_session", "true");
+        showMessage("Signing in with local demo credentials...", "success");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 300);
+        return;
+      }
       showMessage(error.message, "error");
     } else {
       // successful login or signup
+      localStorage.removeItem("dengue_demo_session");
       window.location.href = "dashboard.html";
     }
   } catch (err) {
+    if (email === "test@demo.com" && password === "test") {
+      localStorage.setItem("dengue_demo_session", "true");
+      window.location.href = "dashboard.html";
+      return;
+    }
     showMessage(err.message, "error");
   } finally {
     setLoading(false);
